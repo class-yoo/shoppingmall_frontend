@@ -31,8 +31,7 @@ public class ProductRestTemplate {
 				  null,
 				  new ParameterizedTypeReference<JSONResult<List<ProductVo>>>(){},  keyword, categoryNo, startPageNum, showProductNum);
 		
-		JSONResult jsonResult = response.getBody();
-		List<ProductVo> list = (List<ProductVo>)jsonResult.getData();
+		List<ProductVo> productList = (List<ProductVo>)response.getBody().getData();;
 //		String result = restTemplate.getForObject(
 //				"http://localhost:8080/shoppingmall-backend/product/list/{keyword}/{categoryNo}/{curPageNum}/{showProductNum}",
 //				String.class, keyword, categoryNo, startPageNum, showProductNum);
@@ -41,10 +40,7 @@ public class ProductRestTemplate {
 //		Gson gson = new Gson();
 //		JSONResult jsonResult = gson.fromJson(result, JSONResult.class);
 //		List<ProductVo> list = gson.fromJson(gson.toJson(jsonResult.getData()), new TypeToken<List<ProductVo>>() {}.getType());
-		System.out.println(jsonResult.getData());
-		System.out.println(jsonResult);
-		System.out.println(list.size());
-		return null;
+		return productList;
 	}
 
 }
