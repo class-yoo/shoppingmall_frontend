@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="product">
+	
+	<resultMap type="product" id="productMap">
+		<id column="no" property="no"/>
+		<result column="code" property="code"/>
+		<result column="name" property="name"/>
+		<result column="complete_category" property="completeCategory"/>
+		<result column="material" property="material"/>
+		<result column="description" property="description"/>
+		<result column="detail_description" property="detailDescription"/>
+		<result column="supply_price" property="supplyPrice"/>
+		<result column="consumer_price" property="consumerPrice"/>
+		<result column="manufacturer" property="manufacturer"/>
+		<result column="supplier" property="supplier"/>
+		<result column="home" property="home"/>
+		<result column="manufacture_date" property="manufactureDate"/>
+		<result column="restock_check" property="restockCheck"/>
+		<result column="purchase_count" property="purchaseCount"/>
+		<result column="display_check" property="displayCheck"/>
+		<result column="sale_check" property="saleCheck"/>
+		<result column="hits" property="hits"/>
+		<result column="preference_score" property="preferenceScore"/>
+		<result column="post_priority" property="postPriority"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="category_no" property="categoryNo"/>
+		<collection column="no" property="displayedProducts" select="selectDisplayedProductsByProductNo"/>
+		<collection column="no" property="options" select="selectOptionsByProductNo"/>
+		<collection column="no" property="productImages" select="selectImagesByProductNo"/>
+	</resultMap>
+	
+	<insert id="insertProduct" parameterType="product">
+		<![CDATA[
+			insert
+			into product
+			values(null, #{code}, #{name}, #{completeCategory}, #{material}, #{description}, #{detailDescription},
+			#{supplyPrice}, #{consumerPrice}, #{manufacturer}, #{supplier}, #{home}, #{manufactureDate}, 
+			#{restockCheck},#{purchaseCount}, #{displayCheck}, #{saleCheck}, #{hits}, #{preferenceScore},
+			#{postPriority}, now(), #{categoryNo});
+		]]>
+		<selectKey  keyProperty="no" resultType="long" order="AFTER">
+                SELECT LAST_INSERT_ID()
+        </selectKey>
+	</insert>
+	
+	<insert id="insertDisplayedProduct" parameterType="displayedProduct">
+		<![CDATA[
+			insert
+			into displayed_product
+			values(null , #{code}, #{name}, #{option}, #{mainImagePath}, #{amount}, #{stockCheck},
+			#{additionalFee}, #{price}, #{productNo});
+		]]>
+	</insert>
+	
+	<insert id="insertOption" parameterType="option">
+		<![CDATA[
+			insert
+			into product_option
+			values(null , #{code}, #{optionKey}, #{optionValues}, #{productNo})
+		]]>
+	</insert>
+	
+	<insert id="insertImage" parameterType="productImage">
+		<![CDATA[
+			insert
+			into image
+			values(null , #{imagePath}, #{mainImageCheck}, #{productNo})
+		]]>
+	</insert>
+	
+	<select id="selectProductByProductNo" resultMap="productMap" parameterType="long">
+		<![CDATA[
+			select no, code, name, complete_category, material, description, detail_description, supply_price,
+			consumer_price, manufacturer, supplier, home, manufacture_date, restock_check, purchase_count, display_check,
+			sale_check, hits, preference_score, post_priority, reg_date, category_no
+			from product
+			where no = #{productNo}
+		]]>
+	</select>
+	
+	<select id="selectDisplayedProductsByProductNo" resultType="displayedProduct" parameterType="long">
+		<![CDATA[
+		select no, code, name, option, main_image_path as 'mainImagePath', amount,  stock_check as 'stockCheck',
+		additional_fee as 'additionalFee', price, product_no as 'productNo'
+		from displayed_product
+		where product_no = #{productNo}
+		]]>
+	</select>
+	
+	<select id="selectOptionsByProductNo" resultType="option" parameterType="long">
+		<![CDATA[
+		select no, option_code as 'code', option_key as 'optionKey', option_values as 'optionValues', product_no as 'productNo'
+		from product_option
+		where product_no = #{productNo}
+		]]>
+	</select>
+	
+	<select id="selectImagesByProductNo" resultType="productImage" parameterType="long">
+		<![CDATA[
+		select no, image_path as 'imagePath', main_image_check as 'mainImageCheck', product_no as 'productNo'
+		from image
+		where product_no = #{productNo}
+		]]>
+	</select>
+	
+	<!-- 최하위 CategoryNo와 keyword를 포함한 튜플을 찾는다. -->	
+	<select id="selectProductCount" resultType="long" parameterType="map">
+		<![CDATA[
+		select count(no)
+		from product
+		]]>
+		<choose>
+			<when test="categoryNo == 0">
+        		where name like '%${keyword}%'
+        	</when>
+        	<otherwise>
+        		where category_no = #{categoryNo} and name like '%${keyword}%'
+        	</otherwise>
+        </choose>
+	</select>
+	
+	<select id="selectSearchProductList" resultType="product" parameterType="map">
+		<![CDATA[
+		select a.no, a.name, a.consumer_price as 'consumerPrice', a.display_check as 'displayCheck',
+		a.sale_check as 'saleCheck', a.complete_category as 'completeCategory', a.reg_date as 'regDate',
+		b.image_path as 'mainImage'
+		from product a, image b
+		]]>
+		where a.no = b.product_no 
+		and b.main_image_check = 'Y'
+		<choose>
+			<when test="categoryNo == 0">
+        		and a.name like '%${keyword}%'
+        	</when>
+        	<otherwise>
+        		and a.category_no = #{categoryNo} and a.name like '%${keyword}%'
+        	</otherwise>
+        </choose>
+		order by a.no desc
+		limit #{showProductNum} offset #{startPageNum}
+	</select>
+	
+	<update id="updateProduct" parameterType="product">
+		update product
+		set name=#{name}, material=#{material}, description=#{description},
+		detail_description = #{detailDescription}, supply_price = #{supplyPrice}, consumer_price =#{consumerPrice}, 
+		manufacturer=#{manufacturer}, supplier=#{supplier}, home=#{home}, manufacture_date =#{manufactureDate},
+		restock_check =#{restockCheck} , purchase_count =#{purchaseCount}, display_check =#{displayCheck},
+		sale_check =#{saleCheck}, hits =#{hits}, preference_score =#{preferenceScore}, post_priority =#{postPriority},
+		category_no =#{categoryNo}
+		where no = #{no}
+	</update>
+	
+	
+	<delete id="deleteProduct" parameterType="long">
+		delete 
+		from product
+		where no = #{no}
+	</delete>
+	
+	<delete id="deleteOptionByProductNo" parameterType="long">
+		delete 
+		from product_option
+		where product_no = #{productNo}
+	</delete>
+	
+	<delete id="deleteDisplayedProductByProductNo" parameterType="long">
+		delete 
+		from displayed_product
+		where product_no = #{productNo}
+	</delete>
+	
+	<delete id="deleteImageByProductNo" parameterType="long">
+		delete 
+		from image
+		where product_no = #{productNo}
+	</delete>
+	
+	<delete id="deleteImageByImageNo" parameterType="long">
+		delete 
+		from image
+		where no = #{imageNo}
+	</delete>
+	
+	<delete id="deleteOptionByOptionNo" parameterType="long">
+		delete 
+		from product_option
+		where no = #{optionNo}
+	</delete>
+	
+	<delete id="deleteDisplayedProductByOption" parameterType="long">
+		delete 
+		from displayed_product
+		where product_no = #{productNo] and option like concat('%',#{optionValue},'%')
+	</delete>
+	
+</mapper>

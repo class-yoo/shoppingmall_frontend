@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.cafe24.shoppingmall.vo.UserVo" alias="user"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.CartVo" alias="cart"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.ProductVo" alias="product"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.DisplayedProductVo" alias="displayedProduct"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.ProductImage" alias="productImage"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.OrderVo" alias="order"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.OrderProductVo" alias="orderProduct"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.OptionVo" alias="option"/>
+		<typeAlias type="com.cafe24.shoppingmall.vo.CategoryVo" alias="category"/>
+	</typeAliases>
+	<mappers>
+		 <mapper resource="com/cafe24/config/app/mybatis/mapper/user.xml"/>
+		 <mapper resource="com/cafe24/config/app/mybatis/mapper/cart.xml"/>
+		 <mapper resource="com/cafe24/config/app/mybatis/mapper/order.xml"/>
+		 <mapper resource="com/cafe24/config/app/mybatis/mapper/product.xml"/>
+		 <mapper resource="com/cafe24/config/app/mybatis/mapper/category.xml"/>
+		 
+	</mappers>
+</configuration>
+
+

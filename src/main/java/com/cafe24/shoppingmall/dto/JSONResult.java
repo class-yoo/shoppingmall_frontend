@@ -1,0 +1,39 @@
+package com.cafe24.shoppingmall.dto;
+
+
+public class JSONResult<T> {
+	
+		private String result; //success, fail
+		private String message; // if fail, set
+		private T data; // if success, set 
+		
+		public JSONResult() {
+		}
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public static <T> JSONResult success(T data) {
+			return new JSONResult("success", null, data);
+		}
+		
+		@SuppressWarnings({ "rawtypes", "unchecked" })
+		public static JSONResult fail(String message) {
+			return new JSONResult("fail", message, null);
+		}
+		
+		private JSONResult(String result, String message, T data) {
+			this.result = result;
+			this.message = message;
+			this.data = data;
+		}	
+		
+		public String getResult() {
+			return result;
+		}
+		public String getMessage() {
+			return message;
+		}
+		public T getData() {
+			return data;
+		}
+
+}
