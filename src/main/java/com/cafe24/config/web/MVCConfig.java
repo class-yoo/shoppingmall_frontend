@@ -59,7 +59,7 @@ public class MVCConfig extends WebMvcConfigurerAdapter {
 		
 		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(builder.build());  		
 		converter.setSupportedMediaTypes(Arrays.asList(new MediaType("application", "json", Charset.forName("UTF-8"))));	
-
+		
 		return converter;		
 	}
 	

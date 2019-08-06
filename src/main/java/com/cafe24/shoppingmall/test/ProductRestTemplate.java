@@ -10,8 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import com.cafe24.shoppingmall.dto.JSONResult;
 import com.cafe24.shoppingmall.vo.CategoryVo;
 import com.cafe24.shoppingmall.vo.ProductVo;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 public class ProductRestTemplate {
 
@@ -24,14 +22,14 @@ public class ProductRestTemplate {
 	public List<ProductVo> selectSearchProductList(String keyword, Long categoryNo, int startPageNum,
 			int showProductNum) {
 		
-		// ProductList형태로 바로 역직렬화 시켜주려면 
-		ResponseEntity<JSONResult<List<ProductVo>>> response = restTemplate.exchange(
+		ResponseEntity<JSONResult> response = restTemplate.exchange(
 				"http://localhost:8080/shoppingmall-backend/product/list/{keyword}/{categoryNo}/{curPageNum}/{showProductNum}",
-				  HttpMethod.GET,
+				  HttpMethod.POST,
 				  null,
-				  new ParameterizedTypeReference<JSONResult<List<ProductVo>>>(){},  keyword, categoryNo, startPageNum, showProductNum);
+				  new ParameterizedTypeReference<JSONResult>(){},  keyword, categoryNo, startPageNum, showProductNum);
 		
-		List<ProductVo> productList = (List<ProductVo>)response.getBody().getData();;
+		List<ProductVo> productList = (List<ProductVo>)response.getBody().getData();
+		
 //		String result = restTemplate.getForObject(
 //				"http://localhost:8080/shoppingmall-backend/product/list/{keyword}/{categoryNo}/{curPageNum}/{showProductNum}",
 //				String.class, keyword, categoryNo, startPageNum, showProductNum);
