@@ -57,12 +57,24 @@
 		
 	}
 	.btn-md{
-	
+		
 		background-color: #2ECA6A;
+		width : 120px;
+		height: 40px;
+		text-align:center;
+		
+	}
+	
+	.login-oper-group{
+		text-align: center;
 	}
 
-
 </style>
+
+<script type="text/javascript">
+
+	
+</script>
 </head>
 
 <body>
@@ -78,7 +90,7 @@
 						<form id="login-form" class="form" action="" method="post">
 							<h3 class="text-center title-2">Login</h3>
 							<div class="form-group">
-								<label for="username" class="title-2">Username:</label><br>
+								<label for="username" class="title-2">ID:</label><br>
 								<input type="text" name="username" id="username"
 									class="form-control">
 							</div>
@@ -87,11 +99,16 @@
 								<input type="text" name="password" id="password"
 									class="form-control">
 							</div>
-							<div class="form-group">
-								<label for="remember-me" class="text-info"><span>Remember
-										me</span> <span><input id="remember-me" name="remember-me"
-										type="checkbox"></span></label><br> 
-								<input type="submit" name="submit" class="btn btn-info btn-md" value="submit">
+							<div class="form-group login-oper-group">
+								<div class="form-group remember-me-group">
+								<label for="remember-me" class="text-info">
+								<span>자동로그인</span>
+								<span>
+								<input id="remember-me" name="remember-me"
+										type="checkbox"></span></label>
+							</div>
+										<br> 
+								<input type="submit" name="submit" class="btn btn-info btn-md" value="Ok">
 							</div>
 							<div id="register-link" class="text-right">
 								<a href="#" class="title-2">가입하기</a>

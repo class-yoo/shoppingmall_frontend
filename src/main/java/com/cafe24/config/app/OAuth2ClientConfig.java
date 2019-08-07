@@ -13,7 +13,7 @@ import org.springframework.security.oauth2.common.AuthenticationScheme;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
 import org.springframework.web.client.RestTemplate;
 
-import com.cafe24.shoppingmall.util.BaseURL;
+import com.cafe24.shoppingmall.util.APIServerURL;
 
 @Configuration
 @EnableOAuth2Client
@@ -29,7 +29,7 @@ public class OAuth2ClientConfig {
 	public OAuth2ProtectedResourceDetails resourceDetails() {
         ClientCredentialsResourceDetails resourceDetails = new ClientCredentialsResourceDetails();
         
-        resourceDetails.setAccessTokenUri(BaseURL.getContextURL()+"/v1/oauth/token");
+        resourceDetails.setAccessTokenUri(APIServerURL.getContextURL()+"/v1/oauth/token");
 	    resourceDetails.setClientId("shoppingmall");
 	    resourceDetails.setClientSecret("1234");
         resourceDetails.setGrantType("client_credentials");

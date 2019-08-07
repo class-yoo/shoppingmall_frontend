@@ -1,6 +1,6 @@
 package com.cafe24.shoppingmall.util;
 
-public class BaseURL {
+public class APIServerURL {
 
 	public static final String URL_PROTOCOL = "http://";
 	public static final String CONTEXT_IP = "localhost";

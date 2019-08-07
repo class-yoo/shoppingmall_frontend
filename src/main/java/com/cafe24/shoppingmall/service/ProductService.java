@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import com.cafe24.shoppingmall.dto.JSONResult;
-import com.cafe24.shoppingmall.util.BaseURL;
+import com.cafe24.shoppingmall.util.APIServerURL;
 import com.cafe24.shoppingmall.vo.OptionVo;
 import com.cafe24.shoppingmall.vo.ProductImage;
 import com.cafe24.shoppingmall.vo.ProductVo;
@@ -43,8 +43,7 @@ public class ProductService {
 	
 	public List<ProductVo> getSearchProductList(String keyword, Long categoryNo, int startPageNum, int showProductNum) {
 		
-		String endpoint = BaseURL.getContextURL()+"/product/list/{keyword}/{categoryNo}/{curPageNum}/{showProductNum}";
-		System.out.println();
+		String endpoint = APIServerURL.getContextURL()+"/product/list/{keyword}/{categoryNo}/{curPageNum}/{showProductNum}";
 		
 		ResponseEntity<JSONResult> response = restTemplate.exchange(
 				endpoint, HttpMethod.GET, null,

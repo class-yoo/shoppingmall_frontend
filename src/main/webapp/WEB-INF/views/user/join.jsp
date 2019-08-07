@@ -5,7 +5,6 @@
 	pageEncoding="UTF-8"%>
 
 <head>
-
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
@@ -13,7 +12,7 @@
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" rel="stylesheet">
-
+	
     <!-- Bootstrap CSS File -->
     <link href="${pageContext.request.contextPath}/assets/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -25,7 +24,7 @@
     <!-- Main Stylesheet File -->
     <link href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">
 
-
+	
     <style type="text/css">
 		body{
 			padding: 10px;
@@ -64,10 +63,196 @@
         	width: 150px;
         	height: 50px;
         	padding: 10px;
+        	
         }
         
     </style>
 
+
+<script>
+	function check(validation, info) {
+    	return validation.test(info);
+	}
+	
+	var successColor ="#569543"
+	var failColor = "#FE2E2E";
+		
+		
+	var checkId = false;
+	var checkPassword = false;
+	var checkPasswordConfirm = false;
+	var checkContact2= false;
+	var checkContact3= false;
+	
+		
+	var validIdType = /^[a-zA-Z]{4,12}$/;
+	var vlaidPasswordType = /(?=.*\d{1,20})(?=.*[~`!@#$%\^&*()-+=]{1,20})(?=.*[a-zA-Z]{2,20}).{8,20}$/;
+
+$(function(){
+	
+	$('#id').change(function(){
+		var idText = $(this);
+		var idVal = idText.val();
+		if(check(validIdType, idVal) == false) {
+			idText.css('border-color',failColor);
+			$('#idMsg').text('사용할 수 없습니다.  ');
+			checkId = false;
+	        return;
+	    }else{
+		      $.ajax({ 
+		         url:"${pageContext.servletContext.contextPath}/user/checkId?checkId=" + idVal,
+		         type:"get", 
+		         dataType:"json",
+		         data:"",
+		         success:function(response){
+		            if("success" == response.result){
+		            	idText.css('border-color', successColor);
+		            	$('#idMsg').text('사용 가능한 아이디입니다.  ');
+		            	checkId = true;
+		            	return ;
+		            }else{
+		            	idText.css('border-color',failColor);
+		            	$('#idMsg').text(response.message+'  ');
+		            	idText.focus();
+		            	checkId = false;
+		            	return;
+		            }
+		         },
+		         error:function(xhr, error){ 
+		            console.error("error:" + error) 
+		         }
+		      });
+	    }
+	});
+	
+	
+	$('#password').change(function(){
+		var passwordText = $(this);
+		var passwordVal = passwordText.val();
+		if(check(vlaidPasswordType, passwordVal) == false) {
+			passwordText.css('border-color',failColor);
+			$('#passwordMsg').text('사용할 수 없습니다.  ');
+			checkPassword = false;
+	    }else{
+	    	passwordText.css('border-color',successColor);
+			$('#passwordMsg').text('사용가능한 패스워드입니다.');
+			checkPassword = true;
+	    }
+	});
+	
+	$('#password_confirm').change(function(){
+		var passwordConfirmText = $(this);
+		var passwordConfirmVal = passwordConfirmText.val();
+		
+		if($('#password').val() != passwordConfirmVal) {
+			passwordConfirmText.css('border-color',failColor);
+			$('#password_confirmMsg').text('비밀번호와 다릅니다.  ');
+			
+	    }else{
+	    	passwordConfirmText.css('border-color',successColor);
+			$('#password_confirmMsg').text('비밀번호와 일치합니다.');
+			checkPasswordConfirm = true;
+	    }
+	});
+	
+	
+	$('#contact2').on('propertychange change keyup paste input"', function() {  
+		$(this).val($(this).val().replace(/[^0-9]/g,""));
+		if($(this).val().length == 4){
+			$(this).css('border-color',successColor);
+			checkContact2 = true;
+		}else{
+			$(this).css('border-color',failColor);
+			checkContact2 = false;
+		}
+	});
+	
+	$('#contact3').on('propertychange change keyup paste input"', function() {
+		$(this).val($(this).val().replace(/[^0-9]/g,""));
+		
+		if($(this).val().length == 4){
+			$(this).css('border-color',successColor);
+			checkContact3 = true;
+		}else{
+			$(this).css('border-color',failColor);
+			checkContact3 = false;
+		}
+	});
+	
+	$('#emailSelect').change(function(){
+		var emailSelectedOption = $('#emailSelect option:selected').val();
+		if(emailSelectedOption == "직접입력"){
+			$('#email2').val('');
+		}else{
+			$('#email2').val(emailSelectedOption);
+		}
+	});
+	
+	
+	$("#join-btn").click(function() {
+		
+		if(checkId == false){
+			alert("아이디를 확인하세요")
+			$("#id").focus();
+			return;
+		}
+		if(checkPassword == false){
+			alert("비밀번호를 확인하세요")
+			$("#password").focus();
+			return;
+		}
+		if(checkPasswordConfirm == false){
+			alert("비밀번호를 확인하세요")
+			$("#password_confirm").focus();
+			return;
+		}
+		if(checkContact2 == false){
+			alert("연락처를 확인하세요")
+			$("#contact2").focus();
+			return;
+		}
+		if(checkContact3 == false){
+			alert("연락처를 확인하세요")
+			$("#contact3").focus();
+			return;
+		}
+		
+		var id = $("#id").val();
+		var password = $("#password").val();
+		var name = $("#name").val(); 
+		var contact = $("#contact1").val() +"-"+ $("#contact2").val() + "-" +$("#contact3").val();
+		var email = $("#email1").val() + "@" + $("#email2").val(); 
+		
+		$.ajax({ 
+	         url:"${pageContext.servletContext.contextPath}/user/join",
+	         type:"post", 
+	         dataType:"json",
+	         data: {"id" : id, "password" : password, "name" : name, "contact" : contact, "email" : email},
+	         success:function(response){
+	            if("success" == response.result){
+	            	alert("회원가입에 성공했습니다.");
+					window.location.href = "${pageContext.servletContext.contextPath}/user/login";
+	            }else{
+	            	alert(response.message);
+	            	return;
+	            }
+	         },
+	         error:function(response, xhr, error){ 
+	        	 alert("response: "+response+" status: "+xhr+" error:"+error);
+	         }
+	      });
+		
+	});
+	
+});
+
+
+
+
+
+
+	
+</script>
 </head>
 
 <body>
@@ -81,17 +266,20 @@
             <tbody>
                 <tr>
                     <th scope="row">아이디 </th>
-                    <td><input id="member_id" name="member_id" class="inputTypeText" placeholder="아이디" value="" type="text" />
-                        <span id="idMsg"></span> (영문소문자/숫자, 4~16자)</td>
+                    <td><input id="id" name="id" class="inputTypeText" placeholder="아이디" value="" type="text" style="width: 200px;"/>
+                        <span id="idMsg"></span> (영문자로, 4~16자)</td>
                 </tr>
                 <tr>
                     <th scope="row">비밀번호 </th>
-                    <td><input id="passwd" name="passwd" autocomplete="off" placeholder="비밀번호" maxlength="16" value="" type="password" /> (영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10자~16자)</td>
+                    <td><input id="password" name="password" autocomplete="off" placeholder="비밀번호" maxlength="20" value="" type="password" /> 
+                    	<span id="passwordMsg"></span> (숫자,특수문자 각 1회 / 영문 2개 이상 사용, 8자~20자)</td>
                 </tr>
                 <tr>
                     <th scope="row">비밀번호 확인</th>
 
-                    <td><input id="user_passwd_confirm" name="user_passwd_confirm" placeholder="비밀번호확인" value="" type="password" /></td>
+                    <td><input id="password_confirm" name="password_confirm" placeholder="비밀번호확인" value="" type="password" />
+                    	<span id="password_confirmMsg"></span>
+                    </td>
                 </tr>
                 <tr>
                     <th scope="row">비밀번호 확인 질문</th>
@@ -120,11 +308,7 @@
                 </tr>
                 <tr class="displaynone">
                     <th scope="row">이름</th>
-                    <td><input id="name_en" name="name_en" class="ec-member-name" placeholder="" maxlength="30" value="" type="text" /></td>
-                </tr>
-                <tr id="companyNoRow">
-                    <th scope="row">사업자번호 </th>
-                    <td id="companySsn"><input id="cssn" name="cssn"  class="inputTypeText" placeholder="" maxlength="20" value="" type="text" /></td>
+                    <td><input id="name" name="name" class="ec-member-name" placeholder="" maxlength="30" value="" type="text" /></td>
                 </tr>
                 <tr id="nation">
                     <th>국적</th>
@@ -377,15 +561,15 @@
                 <tr>
                     <th scope="row">주소
                     </th>
-                    <td><input id="postcode1" name="postcode1" class="inputTypeText" placeholder="" readonly="readonly" maxlength="14" value="" type="text" /> <a href="#none" onclick="" id="postBtn">
+                    <td><input id="postcode1" name="postalCode" class="inputTypeText" placeholder="" maxlength="14" value="" type="text" /> <a href="#none" onclick="" id="postBtn">
                             <span class="btn02" style="height: 25px; line-height: 25px; vertical-align: top; padding: 0">우편번호</span></a><br />
-                        <input id="addr1" name="addr1" class="inputTypeText" placeholder="" readonly="readonly" value="" type="text" /> 기본주소<br />
-                        <input id="addr2" name="addr2" class="inputTypeText" placeholder="" value="" type="text" />
+                        <input id="addr1" name="address" class="inputTypeText" placeholder=""  value="" type="text" /> 기본주소<br />
+                        <input id="addr2" name="detailAddress" class="inputTypeText" placeholder="" value="" type="text" />
                         나머지주소</td>
                 </tr>
                 <tr>
-                    <th scope="row">일반전화</th>
-                    <td><select id="phone1" name="phone[]">
+                    <th scope="row">연락처</th>
+                    <td><select id="contact1" name="contact1">
                             <option value="02">02</option>
                             <option value="031">031</option>
                             <option value="032">032</option>
@@ -416,20 +600,7 @@
                             <option value="017">017</option>
                             <option value="018">018</option>
                             <option value="019">019</option>
-                        </select>-<input id="phone2" name="phone[]" maxlength="4" fw-filter="isNumber&isNumber" fw-label="일반전화" fw-alone="N" fw-msg="" value="" type="text" />-<input id="phone3" name="phone[]" maxlength="4" fw-filter="isNumber&isNumber" fw-label="일반전화" fw-alone="N" fw-msg="" value="" type="text" /></td>
-                </tr>
-                <tr>
-                    <th scope="row">휴대전화
-                        <!--<img src="/design1/kr/ico_required__.png" alt="필수" />-->
-                    </th>
-                    <td><select id="mobile1" name="mobile[]">
-                            <option value="010">010</option>
-                            <option value="011">011</option>
-                            <option value="016">016</option>
-                            <option value="017">017</option>
-                            <option value="018">018</option>
-                            <option value="019">019</option>
-                        </select>-<input id="mobile2" name="mobile[]" maxlength="4" fw-filter="isNumber" fw-label="휴대전화" fw-alone="N" fw-msg="" value="" type="text" />-<input id="mobile3" name="mobile[]" maxlength="4" fw-filter="isNumber" fw-label="휴대전화" fw-alone="N" fw-msg="" value="" type="text" /></td>
+                        </select>-<input id="contact2" name="contact2" maxlength="4" value="" type="text" />-<input id="contact3" name="contact3" maxlength="4" value="" type="text" /></td>
                 </tr>
                 <tr class="">
                     <th scope="row">SMS 수신여부 </th>
@@ -442,7 +613,8 @@
                 </tr>
                 <tr>
                     <th scope="row">이메일 </th>
-                    <td><input id="email1" name="email1" fw-filter="isFill" fw-label="이메일" fw-alone="N" fw-msg="" class="mailId" value="" type="text" />@<input id="email2" name="email2" fw-filter="isFill" fw-label="이메일" fw-alone="N" fw-msg="" class="mailAddress" readonly="readonly" value="" type="text" /><select id="email3" fw-filter="isFill" fw-label="이메일" fw-alone="N" fw-msg="">
+                    <td><input id="email1" name="email1" class="mailId" value="" type="text" />@<input id="email2" name="email2" class="mailAddress" type="text" />
+                    <select id="emailSelect">
                             <option value="" selected="selected">- 이메일 선택 -</option>
                             <option value="naver.com">naver.com</option>
                             <option value="daum.net">daum.net</option>
@@ -453,7 +625,7 @@
                             <option value="korea.com">korea.com</option>
                             <option value="dreamwiz.com">dreamwiz.com</option>
                             <option value="gmail.com">gmail.com</option>
-                            <option value="etc">직접입력</option>
+                            <option value="">직접입력</option>
                         </select></td>
                 </tr>
                 <tr class="">
@@ -469,7 +641,7 @@
         </table>
         </div>
         <div class="container">
-        	<button type="submit" class="btn btn-success join-btn">가입하기</button>
+        	<button id="join-btn" type="submit" class="btn btn-success join-btn">가입하기</button>
         	<div>
         	</div>
         </div>

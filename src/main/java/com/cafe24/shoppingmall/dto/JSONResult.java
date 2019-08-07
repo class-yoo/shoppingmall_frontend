@@ -16,7 +16,7 @@ public class JSONResult {
 	public static JSONResult fail(String message) {
 		return new JSONResult("fail", message, null);
 	}
-
+	
 	private JSONResult(String result, String message, Object data) {
 		this.result = result;
 		this.message = message;
