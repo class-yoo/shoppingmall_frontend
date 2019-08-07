@@ -15,29 +15,22 @@ public class UserVo {
 	@ValidUserId
 	private String id;
 	
-	@Email
-	@NotEmpty
 	private String email;
 	
 	@NotEmpty
-	@Pattern(regexp="(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,20}",
-		message="비밀번호는 8자 이상 20자 이하의 알파벳, 숫자, 특수문자를 조합하여 작성해야 합니다.") 
+	@Pattern(regexp="(?=.*\\d{1,20})(?=.*[~`!@#$%\\^&*()-+=]{1,20})(?=.*[a-zA-Z]{2,20}).{8,20}$",
+		message="비밀번호는 8자 이상 20자 이하의 숫자,특수문자 각 1회 이상, 영문 2개 이상 사용해야합니다") 
 	@Length(min=8, max=20, message="비밀번호는 8자 이상 20자 이하로 입력해야 합니다.")
 	private String password;
 	
 	private String role = "ROLE_USER";
 	
-	@NotEmpty
-	@Length(min =2, max =8)
 	private String name;
 	
-	@NotEmpty
 	private String birth;
 	
-	@NotEmpty
 	private String contact;
 	
-	@NotEmpty
 	private String gender;
 	private String isWithdrawal;
 

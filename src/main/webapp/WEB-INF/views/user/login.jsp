@@ -73,6 +73,46 @@
 
 <script type="text/javascript">
 
+	$(function () {
+		
+		
+		$('#submit').click(function () {
+			var id = $('#id').val();
+			var password = $('#password').val();
+			
+			if($('#id').val() == ""){
+				alert("아이디를 입력하세요");
+				return;
+			}
+			
+			if($('#password').val() == ""){
+				alert("비밀번호를 입력하세요");
+				return;
+			}
+			
+			$.ajax({ 
+		         url:"${pageContext.servletContext.contextPath}/user/login",
+		         type:"post",
+		         dataType:"json",
+		         data: {"id": id , "password" : password},
+		         success:function(response){
+		            if("success" == response.result){
+		            	window.location.href = "${pageContext.servletContext.contextPath}/";
+		            	return ;
+		            }else{
+		            	alert(response.message);
+		            	return;
+		            }
+		         },
+		         error:function(response, xhr, error){
+		        	 alert("response: "+response+" status: "+xhr+" error:"+error);
+		         }
+		    });
+			
+		});
+	});
+	
+	
 	
 </script>
 </head>
@@ -91,12 +131,12 @@
 							<h3 class="text-center title-2">Login</h3>
 							<div class="form-group">
 								<label for="username" class="title-2">ID:</label><br>
-								<input type="text" name="username" id="username"
+								<input type="text" name="id" id="id"
 									class="form-control">
 							</div>
 							<div class="form-group">
 								<label for="password" class="title-2">Password:</label><br>
-								<input type="text" name="password" id="password"
+								<input type="password" name="password" id="password"
 									class="form-control">
 							</div>
 							<div class="form-group login-oper-group">
@@ -108,7 +148,7 @@
 										type="checkbox"></span></label>
 							</div>
 										<br> 
-								<input type="submit" name="submit" class="btn btn-info btn-md" value="Ok">
+								<input type="button" id="submit" name="submit" class="btn btn-info btn-md" value="Ok">
 							</div>
 							<div id="register-link" class="text-right">
 								<a href="#" class="title-2">가입하기</a>

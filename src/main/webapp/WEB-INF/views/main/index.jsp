@@ -56,13 +56,6 @@
     License: https://bootstrapmade.com/license/
   ======================================================= -->
 
-
-<style>
-.main-product-image {
-	
-}
-</style>
-
 </head>
 
 <body>

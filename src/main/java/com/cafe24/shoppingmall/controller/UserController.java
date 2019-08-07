@@ -1,7 +1,14 @@
 package com.cafe24.shoppingmall.controller;
 
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +24,6 @@ import com.cafe24.shoppingmall.vo.UserVo;
 @RequestMapping("/user")
 public class UserController {
 	
-	
 	@Autowired
 	private UserService userService;
 	
@@ -26,7 +32,35 @@ public class UserController {
 		return "user/login";
 	}
 
+	@ResponseBody
+	@RequestMapping(value= "/login", method=RequestMethod.POST)
+	public JSONResult login(
+			@ModelAttribute @Valid UserVo userVo,
+			BindingResult result,
+			HttpSession session) {
+		
+		if( result.hasErrors() ) {
+			List<ObjectError> list = result.getAllErrors();
+			for(ObjectError error : list) {
+				return JSONResult.fail("아이디와 비밀번호를 확인하세요");
+			}
+		}
+		
+		UserVo authUser = userService.login(userVo);
+		if(authUser == null) {
+			JSONResult.fail("아이디와 비밀번호를 확인하세요");
+		}
+		session.setAttribute("authUser", authUser);
+		session.setMaxInactiveInterval(60*60);
+		
+		return JSONResult.success(true);
+	}
 	
+	@RequestMapping(value= "/logout", method=RequestMethod.GET)
+	public String logout(HttpSession session) {
+		session.invalidate();
+		return "/";
+	}
 	
 	@RequestMapping(value= "/join", method=RequestMethod.GET)
 	public String join() {
@@ -38,6 +72,9 @@ public class UserController {
 	public JSONResult join(@ModelAttribute UserVo userVo) {
 		return userService.join(userVo);
 	}
+	
+	
+	
 	
 	@ResponseBody
 	@RequestMapping(value= "/checkId", method=RequestMethod.GET)

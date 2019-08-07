@@ -1,10 +1,10 @@
 package com.cafe24.shoppingmall.dto;
 
-public class JSONResult {
+public class JSONResult<T> {
 
 	private String result; // success, fail
 	private String message; // if fail, set
-	private Object data; // if success, set
+	private T data; // if success, set
 
 	public JSONResult() {
 	}
@@ -17,7 +17,7 @@ public class JSONResult {
 		return new JSONResult("fail", message, null);
 	}
 	
-	private JSONResult(String result, String message, Object data) {
+	private JSONResult(String result, String message, T data) {
 		this.result = result;
 		this.message = message;
 		this.data = data;
@@ -31,7 +31,7 @@ public class JSONResult {
 		return message;
 	}
 	
-	public Object getData() {
+	public T getData() {
 		return data;
 	}
 

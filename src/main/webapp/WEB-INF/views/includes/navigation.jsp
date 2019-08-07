@@ -113,9 +113,8 @@
           </li>
           
         </ul>
+        <c:import url="/WEB-INF/views/includes/header.jsp" />
       </div>
-     	
-     	
      	
       
       <button type="button" class="btn btn-b-n navbar-toggle-box-collapse d-none d-md-block" data-toggle="collapse"

@@ -46,6 +46,19 @@ public class UserService {
 		return response.getBody();
 		
 	}
+
+	public UserVo login(UserVo userVo) {
+		String endpoint = APIServerURL.getContextURL()+"/user/login";
+		
+		
+		HttpEntity<UserVo> request = new HttpEntity<>(userVo);
+			      
+		ResponseEntity<JSONResult<UserVo>> response = restTemplate
+			            .exchange(endpoint, HttpMethod.POST, request,
+			            		new ParameterizedTypeReference<JSONResult<UserVo>>(){});
+			
+		return response.getBody().getData();
+	}
 	
 	
 	
