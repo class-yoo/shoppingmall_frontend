@@ -26,7 +26,14 @@ public class ProductService {
 	}
  	
 	public ProductVo getProductByProductNo(Long productNo) {
-		return null;
+		
+		String endpoint = APIServerURL.getContextURL()+"/product/{productNo}";
+		
+		ResponseEntity<JSONResult<ProductVo>> response = restTemplate.exchange(
+				endpoint, HttpMethod.GET, null,
+				  new ParameterizedTypeReference<JSONResult<ProductVo>>(){},  productNo);
+		
+		return response.getBody().getData();
 	}
 
 	public boolean modify(ProductVo productVo) {

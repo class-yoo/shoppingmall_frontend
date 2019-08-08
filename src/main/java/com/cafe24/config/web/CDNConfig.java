@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class CDNConfig {
 	
-	private final String CDN_URL= "http://localhost:8090/shoppingmall-cdn/images/product";
+	private final String CDN_URL= "http://localhost:8090/shoppingmall-cdn";
 	
 	@Bean
 	public PropertiesFactoryBean propertyConfigurer() {

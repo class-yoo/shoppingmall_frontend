@@ -99,26 +99,14 @@
             </div>
           </li>
           
-          <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
-              aria-haspopup="true" aria-expanded="false">
-              	카테고리
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-              <a class="dropdown-item" href="property-single.html">탑</a>
-              <a class="dropdown-item" href="blog-single.html">아우터</a>
-              <a class="dropdown-item" href="agents-grid.html"></a>
-              <a class="dropdown-item" href="agent-single.html">Agent Single</a>
-            </div>
-          </li>
-          
         </ul>
-        <c:import url="/WEB-INF/views/includes/header.jsp" />
+        
       </div>
      	
+      <c:import url="/WEB-INF/views/includes/header.jsp" />
       
       <button type="button" class="btn btn-b-n navbar-toggle-box-collapse d-none d-md-block" data-toggle="collapse"
-        data-target="#navbarTogglerDemo01" aria-expanded="false">
+        data-target="#navbarTogglerDemo01" aria-expanded="false" style="margin-left: 20px;">
         <span class="fa fa-search" aria-hidden="true"></span>
       </button>
     </div>

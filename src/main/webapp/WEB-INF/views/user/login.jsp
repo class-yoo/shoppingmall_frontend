@@ -48,22 +48,18 @@
 <style type="text/css">
 	
 	.login-div{
-	
 		margin-top: 180px;
-		
 	}
 	.text-info{
 		color: #2ECA6A;
 		
 	}
 	.btn-md{
-		
 		background-color: #2ECA6A;
 		width : 120px;
 		height: 40px;
 		text-align:center;
-		
-	}
+		}
 	
 	.login-oper-group{
 		text-align: center;
