@@ -21,7 +21,6 @@ public class MainController {
 	public String main(Model model) {
 		
 		List<ProductVo> productList  = productService.getSearchProductList("empty", 0L, 1, 30);
-		
 		model.addAttribute("productList", productList);
 		
 		return "main/index";

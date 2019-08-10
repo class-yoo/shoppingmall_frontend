@@ -47,20 +47,71 @@
             height: 250px;
             width: 350px;
         }
-
+        
+        .product-img{
+        	height:130px;
+            width: 150px;
+        }
         .image-div img {
-            height: 80px;
-            width: 100px;
+        	position : relative;
+            margin-left: 3px;
         }
         .product-tb th{
         	width: 10%;
         }
+        .image-del-btn{
+        	padding: 2px;
+        }
         
-        
+		input.upload_text {/*읽기전용 인풋텍스트*/
+			float:left;
+			width:230px;/* 버튼 포함 전체 가로 길이*/
+			height:19px;
+			line-height:19px;
+			padding:0 3px;
+			border:1px solid #bbb;
+		}
+        	
+       	/*라벨은 원하는대로 커스텀하고*/
+
+		.fileRegiBtn label {
+			display: inline-block; 
+			padding: .5em .75em; 
+			color: #ffffff; 
+			font-size: inherit; 
+			line-height: normal; 
+			vertical-align: middle; 
+			background-color: #28A745; 
+			cursor: pointer; 
+			border: 1px solid #ebebeb; 
+			border-bottom-color: #e2e2e2; 
+			border-radius: .25em;
+		}
+
+		/*파일선택시 선택된 파일명이 붙는것을 가려준다*/
+		.fileRegiBtn input[type="file"]{
+			position: absolute; 
+			width: 1px; 
+			height: 1px; 
+			padding: 0; 	
+			margin: -1px; 
+			overflow: hidden; 
+			clip:rect(0,0,0,0); 
+			border: 0;
+		}
+		
     </style>
 
 
-    <script type="text/javascript">
+    <script>
+    	
+    var options = [];
+    var displayedProducts = [];
+    var productImages = [];
+    
+    var imageNo=0;
+   	var imageIndexArr = [];
+    
         $(function() {
             $('#mainImageUpload').change(function() {
                 var file_data = $('#mainImageUpload').prop('files')[0];
@@ -73,11 +124,16 @@
                     data: form_data,
                     dataType: 'json',
                     enctype: 'multipart/form-data',
-                    cache: false,
                     contentType: false,
+                    crossDomain: true,
                     processData: false,
                     success: function(response) {
-                        $("#mainImage").attr('src', "${cdnUrl}/" + response.data)
+                        $("#mainImage").attr('src', "${cdnUrl}/" + response.data);
+                        $("#mainImage").attr('name', response.data);
+                    },
+                    error:function(xhr, error){
+                    	alert("이미지 업로드를 다시 시도해주세요!");
+                    	console.error(error);
                     }
                 });
             });
@@ -97,14 +153,24 @@
                         data: form_data,
                         dataType: 'json',
                         enctype: 'multipart/form-data',
-                        cache: false,
                         contentType: false,
+                        crossDomain: true,
                         processData: false,
                         success: function(response) {
-                            var $img = $('<img class="product-img ml-2 mb-2" id=image name="image" alt="이미지" src="' +
-                                '${cdnUrl}' + '/' + response.data + '" name="'+response.data+'">');
+                        	imageNo++;
+                        	imageIndexArr.push(imageNo);
+                        	
+                        	$div = $('<div class="row" id="img'+imageNo+'"></div>'	);
+                            $img = $('<img class="product-img ml-2 mb-2 col-9" name="'+response.data+'" alt="이미지" src="' +
+                                '${cdnUrl}' + '/' + response.data + '">');
                             console.log(response.data);
-                            $("#image-div").append($img);
+                            $btn = $('<button class="btn btn-danger form-control image-del-btn col-1"'+ 
+                            		'value="'+imageNo+'" onclick="deleteImage(this)">x</button>');
+                            
+                            $div.append($img);
+                            $div.append($btn);
+                            
+                            $("#image-div").append($div);
                         }
                     });
                 }
@@ -176,15 +242,18 @@
 			
           	//상품등록하기 동작
             $("#register-btn").click(function() {
-				
+            	
             	var topCategoryText =$("#topCategory option:selected").text();
             	var midCategoryText =$("#midCategory option:selected").text();
             	var lowCategoryText =$("#lowCategory option:selected").text();
             	var lowCategoryNo =$("#lowCategory option:selected").val();
             	var name = $("#name").val();
             	var code = $("#code").val();
-            	var supplyPrice = $("#supplyPrice").val();
-            	var comsumerPrice = $("#comsumerPrice").val();
+            	var supplyPrice = parseInt($("#supplyPrice").val());
+            	var consumerPrice = parseInt($("#consumerPrice").val());
+            	var description = $("#description").val();
+            	var detailDescription = $("#detailDescription").val();
+            	//var material =  $("#material").val();
             	//var manufacturer = $("#manufacturer").val();
             	//var supplier = $("#supplier").val();
             	//var home = $("#home").val();
@@ -204,56 +273,84 @@
 				image.mainImageCheck = 'Y';
 				productImages.push(image);
 				
-				$("#complete-option-table tr").each(function(){
+				
+				$("#complete-option-table tbody tr").each(function(){
 					
-					var displayedProduct = new Obejct();
-					var option = $(this).children('#complete-category').val();
-					var additionalFee = $(this).children('#additional-fee').val();
-					var price = Integer.parse(comsumerPrice) + Integer.parse(additionalFee);
+					var displayedProduct = new Object();
+					var option = $(this).children('td:eq(0)').children('div').children('input').val();
+					var additionalFee = parseInt($(this).children('td:eq(1)').children('#additional-fee').val());
+					var price = parseInt(parseInt($("#consumerPrice").val())) + additionalFee;
 					
-					var stockCheck = "";
-					
-					if ($(this).children("input:checkbox[id='manage-stock']").is(":checked") == false){
+					var stockCheck = "Y";
+					if ($(this).children('td:eq(2)').children("input:checkbox[id='manage-stock']").is(":checked") == false){
 						stockCheck = 'N';
 	            	}
-					var amount = $(this).children('#amount').val();
+					var amount = $(this).children('td:eq(3)').children('#amount').val();
 					
 					displayedProduct.name = name;
+					displayedProduct.code = "tempcode"
 					displayedProduct.option = option;
 					displayedProduct.additionalFee = additionalFee;
 					displayedProduct.price = price;
 					displayedProduct.stockCheck = stockCheck;
 					displayedProduct.mainImagePath = imagePath;
 					
+					displayedProducts.push(displayedProduct);
+					
 				});
 				
+				$('#image-div div').each(function(){
+					var image= new Object();
+					var imagePath = $(this).children(".product-img").attr('name');
+					image.imagePath = imagePath;
+					image.mainImageCheck = 'N';
+					productImages.push(image);
+				});
 				
-            	product.categoryNo = lowCategoryNo;
-            	product.code = code
-            	product.name = name
-            	product.completeCategory = topCategoryText+'/'+midCategoryText+'/'+lowCategoryText;
-            	product.supplyPrice = supplyPrice;
-            	product.comsumerPrice = comsumerPrice;
-            	product.manufacturer = 'efaCShop';
-            	product.supplier = 'efaCShop';
-            	product.home = '한국'
-            	product.manufactureDate = '2019-07-21';
-            	product.restockCheck = 'N';
-            	product.displayCheck = displayCheck;
-            	product.saleCheck = saleCheck;
-            	
-            	product.options = options;
-            	//product.displayedProducts = displayedProducts;
-            	//product.productImages = productImages;
-            	
-            	
-            	var product= new Object();
-            	
-			});
-        });
-        
-        
-        
+				var product= new Object();
+	            product.categoryNo = lowCategoryNo;
+	            product.code = code
+	            product.name = name
+	            product.material = '면100%';
+	            product.completeCategory = topCategoryText+'/'+midCategoryText+'/'+lowCategoryText;
+	            product.supplyPrice = supplyPrice;
+	            product.consumerPrice = consumerPrice;
+	            product.manufacturer = 'efaCShop';
+	            product.supplier = 'efaCShop';
+	            product.home = '한국'
+	            product.manufactureDate = '2019-07-21';
+	            product.restockCheck = 'N';
+	            product.displayCheck = displayCheck;
+	            product.saleCheck = saleCheck;
+	            product.description = description;
+	            product.detailDescription = detailDescription;
+	            product.options = options;
+	            product.displayedProducts = displayedProducts;
+	            product.productImages = productImages;
+	            console.log(product);
+	  	      	 $.ajax({ 
+	  	         url:"${pageContext.servletContext.contextPath}/admin/product/register",
+	  	         type:"post",
+	  	         dataType:"json",
+	  	       	 contentType: "application/json",
+	  	         data:JSON.stringify({"categoryNo": product.categoryNo , "code": product.code , "name": product.name, "completeCategory" : product.completeCategory,
+	  	        	"material":product.material ,"supplyPrice": product.supplyPrice , "consumerPrice":product.consumerPrice, "manufacturer": product.manufacturer, "supplier": product.supplier,
+	  	        	"home" : product.home, "manufactureDate" : product.manufactureDate, "restockCheck": product.restockCheck, "displayCheck": product.displayCheck,
+	  	        	"saleCheck": product.saleCheck, "description": product.description, "detailDescription": product.detailDescription, "options": product.options, 
+	  	        	"displayedProducts": product.displayedProducts, "productImages" : product.productImages}),
+	  	         success:function(response){
+	  	            if(response.result == "success"){
+	  	            	window.location.href = "${pageContext.servletContext.contextPath}/";
+	  	               return ;
+	  	            }
+	  	         },
+	  	         error:function(xhr, error){  
+	  	            console.error("error:" + error) 
+	  	         }
+	  	      }); 
+	  	      
+        	});
+        });  	
         // 옵션(품목코드) TR 추가하기 메소드
         var makeCompleteOptionTr = function(completeOptionNo, completeOption){
         	
@@ -329,20 +426,18 @@
         	$('#completeOption'+completeOptionNo).remove();
 		}
         
-        var options = [];
-        var displayedProducts = [];
-        var productImages = [];
-        
-        var displayedProduct= new Object();
-        
-        
+        var deleteImage = function (delImageBtn) {
+        	imageNo = $(delImageBtn).val();
+        	$('#img'+imageNo).remove();
+        	imageIndexArr.splice(imageIndexArr.indexOf(imageNo),1);
+		}
         
     </script>
 </head>
 
 <body>
 
-    <c:import url="/WEB-INF/views/includes/navigation.jsp" />
+    <c:import url="/WEB-INF/views/admin/includes/navigation.jsp" />
 
     <div class="container root-container">
         <div class="row-fluid">
@@ -475,15 +570,13 @@
                                 
                                 <tr>
                                     <th>상품설명</th>
-                                    <td colspan="5"><textarea id="bootstrap-editor" style="width: 98%; height: 80px;" name="description"
-                                    id="description"></textarea>
+                                    <td colspan="5"><textarea class="form-control" style="width: 98%; height: 80px;" id="description" name="description"></textarea>
                                     </td>
                                 </tr>
 
                                 <tr>
                                     <th>상세설명</th>
-                                    <td colspan="5"><textarea id="bootstrap-editor" style="width: 98%; height: 200px;" name="detailDescription"
-                                    id="detailDescription"></textarea>
+                                    <td colspan="5"><textarea class="form-control" style="width: 98%; height: 200px;" id="detailDescription" name="detailDescription"></textarea>
                                     </td>
                                 </tr>
 
@@ -497,7 +590,13 @@
 	                                            <img id=mainImage name="mainImage" alt="대표이미지" src="">
 	                                        </div>
 	                                        <div class="mainImage-upload-div">
-	                                            <input id="mainImageUpload" type="file" name="mainImageUpload" />
+	                                        	<div class="form-group" style="margin: 8px 0 8px;">
+													<div class="fileRegiBtn">
+													<label for="mainImageUpload"><strong>대표 이미지등록</strong></label>
+													<input id="mainImageUpload" type="file" name="mainImageUpload" />
+													</div>
+												</div>
+	                                            
 	                                        </div>
 	                                    </td>
                                  </tr>
@@ -507,10 +606,14 @@
 	                                    	(최대 10개)
 	                                    </th>
 	                                    <td colspan="5">
-		                                     
-		                                     <div class="row image-div" id="image-div">
-		                                    </div>
-		                                   <input multiple="multiple" id="multipleImageUpload" name="multipleImageUpload" type="file" />
+		                                    <div class="row image-div" id="image-div"></div>
+		                                    <div class="form-group" style="margin: 8px 0 8px;">
+													<div class="fileRegiBtn">
+													<label for="multipleImageUpload"><strong>추가 이미지등록</strong></label>
+													<input class="input_file" multiple="multiple" id="multipleImageUpload" name="multipleImageUpload" type="file" />
+													</div>
+											</div>
+		                                   
 		                                <td>
                                  </tr>
                             </table>

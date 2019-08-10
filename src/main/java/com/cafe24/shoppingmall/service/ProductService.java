@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import com.cafe24.shoppingmall.util.APIServerURL;
 import com.cafe24.shoppingmall.vo.OptionVo;
 import com.cafe24.shoppingmall.vo.ProductImage;
 import com.cafe24.shoppingmall.vo.ProductVo;
+import com.cafe24.shoppingmall.vo.UserVo;
 
 @Service
 public class ProductService {
@@ -21,8 +23,16 @@ public class ProductService {
 	@Autowired
 	private RestTemplate restTemplate;
 	
-	public boolean add(ProductVo productVo) {
-		return true;
+	public JSONResult add(ProductVo productVo) {
+		
+		String endpoint = APIServerURL.getContextURL()+"/product/";
+		
+		HttpEntity<ProductVo> request = new HttpEntity<>(productVo);
+			      
+		ResponseEntity<JSONResult> response = restTemplate
+			            .exchange(endpoint, HttpMethod.POST, request, JSONResult.class);
+			      
+		return response.getBody();
 	}
  	
 	public ProductVo getProductByProductNo(Long productNo) {
