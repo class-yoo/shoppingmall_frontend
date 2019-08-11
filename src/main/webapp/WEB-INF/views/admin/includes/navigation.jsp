@@ -30,11 +30,15 @@
             <a class="nav-link" href="#">장바구니관리</a>
           </li>
           
+          <li class="nav-item">
+            <a class="nav-link" href="#">매출관리</a>
+          </li>
+          
         </ul>
         
       </div>
      	
-      <c:import url="/WEB-INF/views/includes/header.jsp" />
+      <c:import url="/WEB-INF/views/admin/includes/header.jsp" />
       
     </div>
   </nav>

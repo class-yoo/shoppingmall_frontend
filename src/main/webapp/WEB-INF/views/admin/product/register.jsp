@@ -340,7 +340,7 @@
 	  	        	"displayedProducts": product.displayedProducts, "productImages" : product.productImages}),
 	  	         success:function(response){
 	  	            if(response.result == "success"){
-	  	            	window.location.href = "${pageContext.servletContext.contextPath}/";
+	  	            	window.location.href = "${pageContext.servletContext.contextPath}/admin/product/list";
 	  	               return ;
 	  	            }
 	  	         },

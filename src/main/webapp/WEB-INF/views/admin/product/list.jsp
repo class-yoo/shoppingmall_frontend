@@ -1,14 +1,19 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<spring:eval expression="@propertyConfigurer['cdnUrl']" var="cdnUrl" />
+
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
   <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="">
-  <meta name="author" content="">
-
+  <html lang="en">
+  
   <title>SB Admin - Tables</title>
 
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -38,6 +43,15 @@
 	.content-wrapper{
 		margin-top: 180px;
 	}
+	th{
+		border-left: 0.8px ridge;
+		border-bottom: solid 0.8px;
+	}
+	
+	td{
+		border-left: 0.8px ridge;
+		border-bottom: solid 0.8px;
+	}
 	</style>
 </head>
 
@@ -45,61 +59,164 @@
 
 	<c:import url="/WEB-INF/views/admin/includes/navigation.jsp" />
 	
-    <div id="content-wrapper">
+    <div class="content-wrapper">
       <div class="container">
 
         <!-- DataTables Example -->
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa-table"></i>
-            Data Table Example</div>
+            	상품목록</div>
           <div class="card-body">
-            <div class="table-responsive">
-              <table class="table table-bordered form-control" id="dataTable" width="100%" cellspacing="0">
+              <table class="table" style="height: 100%; width: 100%; text-align:center;"  cellspacing="0">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Position</th>
-                    <th>Office</th>
-                    <th>Age</th>
-                    <th>Start date</th>
-                    <th>Salary</th>
+                  	<th>
+                  		<div>
+                    		<p>대표이미지</p>
+                    	</div>
+                  	</th>
+                    <th>
+                    	<div>
+                    		<p>상품명</p>
+                    	</div>
+                    </th>
+                    <th>
+                    	<div>
+                    		<p>판매가</p>
+                    	</div>
+                    </th>
+                    <th width="10%">
+                    	<div>
+                    		<p>진열상태</p>
+                    	</div>
+                    </th>
+                    <th width="10%">
+                    	<div>
+                    		<p>판매상태</p>
+                    	</div>
+                    </th>
+                    <th>
+                    	<div>
+                    		<p>상품분류</p>
+                    	</div>
+                    </th>
+                    <th>
+                    	<div>
+                    		<p>상품등록일</p>
+                    	</div>
+                    </th>
+                    <th></th>
                   </tr>
                 </thead>
-                <tfoot>
+                
+                <tbody id="product-tbody">
+                <c:forEach items="${productList}" var="product">
                   <tr>
-                    <th>상품명</th>
-                    <th>상품코드</th>
-                    <th>등록일</th>
-                    <th>Age</th>
-                    <th>Start date</th>
-                    <th>Salary</th>
+                  	<td>
+	                  	<a href="#">
+    	              		<img alt="상품이미지" src="${cdnUrl}/${product.mainImage}" style="width: 100px; height: 120px;">
+                  		</a>
+                  	</td>
+                    	<td>
+                    	<div class="mt-5" style="padding: 5px;">
+                    		<p>${product.name}</p>
+                    	</div>
+                    	</td>
+                    
+                    <td>
+	                    <div class="mt-5" style="padding: 5px;">
+	                    		<p>${product.consumerPrice}</p>
+	                    </div>
+                    </td>
+                    <td>
+                    
+	                    <div class="mt-5" style="padding: 5px;">
+	                    	<p>${product.displayCheck}</p>
+	                    </div>
+                    </td>
+                    <td>
+                    	<div class="mt-5" style="padding: 5px;">
+	                    	<p>${product.saleCheck}</p>
+	                    </div>
+                    </td>
+                    <td>
+                    	<div class="mt-5" style="padding: 5px;">
+	                    	<p> ${product.completeCategory}</p>
+	                    </div>
+                    </td>
+                    <td>
+                    	<div class="mt-5" style="padding: 5px;">
+	                    	<p>${product.regDate}</p>
+	                    </div>
+                    </td>
+                    <td>
+                    	<div class="mt-5" style="padding: 5px;">
+			                <a href="${pageContext.request.contextPath}/admin/product/remove?productNo=${product.no}">
+	        	            	<button class="btn btn-danger form-control">상품삭제</button>
+	    	                </a>
+    	                </div>
+                    </td>
+                  </tr>
+                </c:forEach>
+                </tbody>
+                
+                <tfoot>
+                 <tr>
+                  	<th>
+                  		<div">
+                    		<p>상품이미지</p>
+                    	</div>
+                  	</th>
+                    <th>
+                    	<div>
+                    		<p>상품명</p>
+                    	</div>
+                    </th>
+                    <th>
+                    	<div>
+                    		<p>판매가</p>
+                    	</div>
+                    </th>
+                    <th width="10%">
+                    	<div>
+                    		<p>진열상태</p>
+                    	</div>
+                    </th>
+                    <th width="10%">
+                    	<div>
+                    		<p>판매상태</p>
+                    	</div>
+                    </th>
+                    <th>
+                    	<div>
+                    		<p>상품분류</p>
+                    	</div>
+                    </th>
+                    <th>
+                    	<div>
+                    		<p>상품등록일</p>
+                    	</div>
+                    </th>
+                    <th></th>
                   </tr>
                 </tfoot>
-                <tbody>
-                  <tr>
-                    <td>Tiger Nixon</td>
-                    <td>System Architect</td>
-                    <td>Edinburgh</td>
-                    <td>61</td>
-                    <td>2011/04/25</td>
-                    <td>$320,800</td>
-                  </tr>
-                  <tr>
-                    <td>Garrett Winters</td>
-                    <td>Accountant</td>
-                    <td>Tokyo</td>
-                    <td>63</td>
-                    <td>2011/07/25</td>
-                    <td>$170,750</td>
-                  </tr>
-                </tbody>
               </table>
-            </div>
           </div>
+          
+          <div class="row">
+          	<div class="col-9 mr-3"></div>
+          	<div class="col-1 ml-2 mb-3">
+          	<a href="${pageContext.request.contextPath}/admin/product/register">
+          		<button class="btn btn-success btn-lg"><strong>상품 추가하기</strong></button>
+          	</a>
+          	</div>
+          	
+          </div>
+          
           <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
         </div>
-
+		
         <p class="small text-center text-muted my-5">
           <em>More table examples coming soon...</em>
         </p>
