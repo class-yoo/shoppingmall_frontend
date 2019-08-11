@@ -70,8 +70,6 @@
 <script type="text/javascript">
 
 	$(function () {
-		
-		
 		$('#submit').click(function () {
 			var id = $('#id').val();
 			var password = $('#password').val();
@@ -93,7 +91,7 @@
 		         data: {"id": id , "password" : password},
 		         success:function(response){
 		            if("success" == response.result){
-		            	window.location.href = "${pageContext.servletContext.contextPath}/";
+		            	window.location.href = "${pageContext.servletContext.contextPath}/admin/product/list";
 		            	return ;
 		            }else{
 		            	alert(response.message);
@@ -104,11 +102,8 @@
 		        	 alert("response: "+response+" status: "+xhr+" error:"+error);
 		         }
 		    });
-			
 		});
 	});
-	
-	
 	
 </script>
 </head>

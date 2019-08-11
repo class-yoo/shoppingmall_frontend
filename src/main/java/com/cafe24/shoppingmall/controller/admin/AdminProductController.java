@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.cafe24.shoppingmall.dto.JSONResult;
@@ -43,6 +44,14 @@ public class AdminProductController {
 	@RequestMapping(value= "/register", method=RequestMethod.POST)
 	public JSONResult register(@RequestBody ProductVo productVo) {
 		return productService.add(productVo);
+	}
+	
+	@RequestMapping(value= "/remove", method=RequestMethod.GET)
+	public String remove(@RequestParam Long productNo) {
+		
+		JSONResult removeResult =  productService.remove(productNo);
+		
+		return "redirect:/admin/product/list";
 	}
 	
 }

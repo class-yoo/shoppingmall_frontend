@@ -216,6 +216,7 @@
 						$(this).children("#option-value-td").children('div').children('div').children('input').each(function() {
 							optionValueArr.push($(this).val());
 						})
+						option.code = "tempOption"
 						optionValueArrList.push(optionValueArr);
 						option.optionValues=optionValueArr.join("/");
 						options.push(option);
@@ -233,7 +234,6 @@
 						makeCompleteOptionTr(completeOptionNo++, completeOptionArr[i]);
 					}
                     
-					options=[];
 			});
           	
 			$('#completeOption-add-btn').click(function() {
@@ -327,7 +327,6 @@
 	            product.options = options;
 	            product.displayedProducts = displayedProducts;
 	            product.productImages = productImages;
-	            console.log(product);
 	  	      	 $.ajax({ 
 	  	         url:"${pageContext.servletContext.contextPath}/admin/product/register",
 	  	         type:"post",
@@ -483,9 +482,9 @@
 
                                 <tr>
                                     <th>상품코드</th>
-                                    <td><input class="form-control col-7" type="text" name="name" id="name"></td>
-                                    <th>상품명</th>
                                     <td><input class="form-control col-7" type="text" name="code" id="code"></td>
+                                    <th>상품명</th>
+                                    <td><input class="form-control col-7" type="text" name="name" id="name"></td>
                                     <th></th>
                                     <td></td>
                                 </tr>

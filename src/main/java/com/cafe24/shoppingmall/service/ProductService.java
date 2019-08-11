@@ -50,8 +50,14 @@ public class ProductService {
 		return true;
 	}
 	
-	public boolean remove(Long productNo) {
-		return true;
+	public JSONResult remove(Long productNo) {
+		String endpoint = APIServerURL.getContextURL()+"/product/{productNo}";
+		
+		ResponseEntity<JSONResult> response = restTemplate.exchange(
+				endpoint, HttpMethod.DELETE, null,
+				  new ParameterizedTypeReference<JSONResult>(){}, productNo);
+		
+		return response.getBody();
 	}
 
 	public Long getProductCount(String keyword, Long categoryNo) {
