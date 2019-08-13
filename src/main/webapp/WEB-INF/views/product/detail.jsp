@@ -16,7 +16,7 @@
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="" name="keywords">
     <meta content="" name="description">
-
+	
     <!-- Favicons -->
     <link href="${pageContext.request.contextPath}/assets/img/favicon.png" rel="icon">
     <link href="${pageContext.request.contextPath}/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
@@ -42,7 +42,8 @@
     Author: BootstrapMade.com
     License: https://bootstrapmade.com/license/
   ======================================================= -->
-
+	<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <style type="text/css">
         strong {
             font-size: 20px;
@@ -79,8 +80,159 @@
 			font-weight: 700;
 			width: 100%;
 		}
+        img:hover{
+        	cursor: pointer;
+        }
         
     </style>
+    
+    <script type="text/javascript">
+    	var completeOptionNo=0;
+    	var displayedProducts = new Array();
+    	
+    	<c:forEach items="${product.displayedProducts}" var="displayedProduct">
+    		var displayedProduct = new Object();
+    		displayedProduct.no = "${displayedProduct.no}";
+    		displayedProduct.code = "${displayedProduct.code}";
+    		displayedProduct.name = "${displayedProduct.name}";
+    		displayedProduct.option = "${displayedProduct.option}";
+    		displayedProduct.amount = "${displayedProduct.amount}";
+    		displayedProduct.additionalFee = "${displayedProduct.additionalFee}";
+    		displayedProduct.productNo = "${displayedProduct.productNo}";
+    		
+    		displayedProducts.push(displayedProduct);
+    	</c:forEach>
+    	
+    	$(function () {
+    		
+    		console.log(displayedProducts);
+    		
+    		var optionCount = $('.option-select').length;
+    		
+    		for(var i=0; i<optionCount-1; i++){
+    			$('.option-select:eq('+i+')').change(function () {
+    				for(var j=i; j<optionCount; j++){
+    					$('.option-select:eq('+j+')').val('default');	
+    				}
+				});
+		    }
+    		
+    		$('.option-select:eq('+(optionCount-1)+')').change(function () {
+    				var completeOption = [];
+    				if($(this).val()=='default'){
+    					return;
+					}
+    				$('.option-select').each(function() {
+    					completeOption.push($(this).val());
+    				});
+    				
+    				if($('#'+completeOption.join("")).length > 0){
+    					alert('이미 존재하는 옵션입니다!');
+    					return;
+    				}
+    				
+    				completeOptionNo ++;
+    				
+    				$tr = $('<tr class="completeOptionTr" id="completeOption'+completeOptionNo+'" style="border: none;"></tr>');
+    				$td1 = $('<td width="30%" class="completeOptionTd" id="'+completeOption.join("")+'">'+completeOption.join("/")+'</td>');
+    				$td2 = $('<td width="40%"></td>')
+    				$td2_div = $('<div class="row product-div"></div>');
+    				$td2_div_div1 = $('<div class="col-1"></div>');
+    				$td2_div_div2 = $('<div class="col-3 product-detail"></div>');
+    				$td2_div_div2_input = $('<input id="quantity'+completeOptionNo+'" readonly="readonly" class="form-control" name="quantity_name" value="1" type="text"/>');
+    				$td2_div_div3 = $('<div class="col-3 product-detail qtt-up-down">');
+    				$td2_div_div3_img1 = $('<img src="//img.echosting.cafe24.com/design/skin/default/product/btn_count_up.gif" alt="수량증가" onclick="upQuantity('+completeOptionNo+')" class="QuantityUp up" />');
+    				$td2_div_div3_img2 = $('<img src="//img.echosting.cafe24.com/design/skin/default/product/btn_count_down.gif" alt="수량감소" onclick="downQuantity('+completeOptionNo+')" class="QuantityDown down" />');
+    				$td2_div_div4 = $('<div class="col-3 product-detail del-btn"></div>');
+    				$td2_div_div4_a = $('<a href="#none" onclick="removeOptionTr('+completeOptionNo+')"><img src="https://img.echosting.cafe24.com/skin/base_ko_KR/product/btn_price_delete.gif" alt="삭제" class="option_box_del" /></a>'); 
+    				
+    				$tr.append($td1);
+    				$tr.append($td2);
+    				$td2.append($td2_div);
+    				$td2_div.append($td2_div_div1);
+    				$td2_div.append($td2_div_div2);
+    				$td2_div_div2.append($td2_div_div2_input);
+    				$td2_div.append($td2_div_div3);
+    				$td2_div_div3.append($td2_div_div3_img1);
+    				$td2_div_div3.append($td2_div_div3_img2);
+    				$td2_div.append($td2_div_div4);
+    				$td2_div_div4.append($td2_div_div4_a);
+    				
+    				$('#added-option').append($tr);
+    				
+    				setTotalPrice(++productCount);
+				});
+    		var cartList = [];
+    		$('#cart-btn').click(function () {
+    			console.log($('.completeOptionTd'));
+    			if($('.completeOptionTr').length == 0){
+    				return;
+    			}
+    			
+				$('.completeOptionTr').each(function () {
+					
+					var tempOption = $(this).children('td:eq(0)').text();
+					var amount = $(this).children('td:eq(1)').children('div').children('div:eq(1)').children('input').val();
+					
+					for(var i = 0; i<displayedProducts.length; i++){
+						if(displayedProducts[i].option == tempOption){
+							var cart = new Object();
+							cart.amount= amount;
+							cart.displayedProductNo = displayedProducts[i].no;
+							cartList.push(cart);
+						}
+					}
+				});
+				
+				$.ajax({
+					 url:"${pageContext.servletContext.contextPath}/cart/add",
+		  	         type:"post",
+		  	         dataType:"json",
+		  	       	 contentType: "application/json",
+		  	         data: {"cartList": cartList},
+		  	         success:function(response){
+		  	            if(response.result == "success"){
+		  	               window.location.href = "${pageContext.servletContext.contextPath}/cart/list";
+		  	               return ;
+		  	            }
+		  	         },
+		  	         error:function(xhr, error){
+		  	            console.error("error:" + error);
+		  	         }
+				});	
+    			
+			});
+    			
+		});
+    	
+    	var removeOptionTr = function (completeOptionNo) {
+			$('#completeOption'+completeOptionNo).remove();
+		};
+    	var upQuantity = function (completeOptionNo) {
+    		var quantity = parseInt($('#quantity'+completeOptionNo).val()) +1 ;
+    		if(quantity >20){
+    			alert('최대수량은 20개 입니다.');
+    			return;
+    		}
+    		$('#quantity'+completeOptionNo).val(quantity);
+    		setTotalPrice(++productCount);
+		};
+    	
+		var downQuantity = function (completeOptionNo) {
+			var quantity = parseInt($('#quantity'+completeOptionNo).val())-1 ;
+    		if(quantity <1){
+    			return;
+    		}
+    		$('#quantity'+completeOptionNo).val(quantity);
+    		setTotalPrice(--productCount);
+		};
+		
+		var setTotalPrice = function(count){
+			$('#totalPrice').val(parseInt(${product.consumerPrice}) * count);
+		}
+		
+		var productCount = 0;
+    </script>
 </head>
 
 <body>
@@ -134,7 +286,6 @@
     <!--/ Intro Single End /-->
 
     <!--/ Agent Single Star /-->
-    <section class="agent-single">
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -149,68 +300,49 @@
                             <div class="agent-info-box">
                                 <div class="agent-title">
                                     <div class="title-box-d">
-                                        <h3 class="title-d" ml-3>${product.name}
+                                        <h3 class="title-d ml-3" >${product.name}</h3>
                                     </div>
                                 </div>
-                                <div class="agent-content mb-3">
+                                <div class="mb-3">
                                     <p class="content-d color-text-a ml-3">
                                         ${product.description}
                                     </p>
-                                    <div class="info-agents color-a mt-1">
                                         <div class="row mt-3 ml-3">
                                             <strong>Price: </strong>
-                                            <span class="color-text-a span-price ml-5">${product.consumerPrice}원 </span>
+                                            <span class="color-text-a span-price ml-5" id="price">${product.consumerPrice}원</span>
                                         </div>
                                         <div class="row mt-3 ml-3">
                                             <strong>Code: </strong>
                                             <span class="color-text-a span-code ml-5"> ${product.code}</span>
                                         </div>
-                                        <c:forEach items="${product.options}" var="option" varStatus="">
+                                        <c:forEach items="${product.options}" var="option" varStatus="index">
                                         <div class="row mt-3 ml-3">
                                             <strong>${option.optionKey}: </strong>
-                                            <select class="form-control" name="option">
-                                            	<option selected>${option.optionKey}선택</option>
+                                            <select class="form-control option-select">
+                                            	<option value="default">${option.optionKey}선택</option>
                                             <c:forEach items="${fn:split(option.optionValues,'/')}" var="optionValue">
-                                                <option value="${code}">${optionValue}</option>
+                                                <option value="${optionValue}">${optionValue}</option>
                                             </c:forEach>
                                             </select>
                                         </div>
                                         </c:forEach>
-                                    </div>
                                 </div>
-                                <div class="socials-footer">
+                                <div>
                                     <hr class="three">
                                     <div id="totalProducts" >
                                         <table border="1" summary="" class="table mt-2" style="text-align: center; border: none;">
-                                            <tbody class="displaynone" style="border: none;">
-                                                <tr style="border: none;">
-                                                    <td width="30%">댄디자켓 <br> 블랙/M</td>
-                                                    <td width="40%">
-                                                    <div class="row product-div" style="">
-		                                                    <div class="col-1">
-		                                                    </div>
-	                                                    	<div class="col-3 product-detail">
-                                                            <input id="quantity" class="form-control" name="quantity_name" value="0" type="text" />
-                                                            </div>
-                                                            <div class="col-3 product-detail qtt-up-down">
-                                                            <img src="//img.echosting.cafe24.com/design/skin/default/product/btn_count_up.gif" alt="수량증가" class="QuantityUp up" />
-                                                            <img src="//img.echosting.cafe24.com/design/skin/default/product/btn_count_down.gif" alt="수량감소" class="QuantityDown down" />
-                                                            </div>
-                                                            <div class="col-3 product-detail del-btn">
-                                                    <a href="#none"><img src="https://img.echosting.cafe24.com/skin/base_ko_KR/product/btn_price_delete.gif" alt="삭제" class="option_box_del" /></a>
-                                                    </div>
-                                                    </div>
-                                                    
-                                                    </td>
-                                                    <td class="right">
-                                                        <span class="quantity_price">${product.consumerPrice}원</span></span>
-                                                    </td>
-                                                </tr>
+                                            <tbody class="added-option" id="added-option" style="border: none;">
                                             </tbody>
                                             <tfoot>
                                                 <tr>
                                                     <td colspan="3">
-                                                        <strong>TOTAL </strong>(QUANTITY) : <span class="total"><strong><em>0</em></strong> (0개)</span>
+                                                    <div class="row">
+                                                    	
+                                                        <span class="ml-2 col-3"><strong>TOTAL : </strong></span>
+                                                        <div class="col-4"></div>
+                                                        <input class="form-control text-center col-3 ml-2" value="0" id="totalPrice" readonly="readonly" type="text"/>
+                                                        <span>원</span>
+                                                    </div>
                                                     </td>
                                                 </tr>
                                             </tfoot>
@@ -220,15 +352,12 @@
                             </div>
                             <div class="row cart-buy-btn" >
                             <div class="col-6">
-                            	<button class="btn btn-warning btn-lg cart-btn" id="cart-btn">장바구니담기</button>
+                            	<button class="btn btn-warning btn-lg cart-btn" id="cart-btn" name="cart-btn">장바구니담기</button>
                             </div>
                             <div class="col-6">
                             	<button class="btn btn-success btn-lg buy-btn" id="buy-btn">바로구매</button>
                            	</div>
                             </div>
-                            
-                            
-                            
                             
                         </div>
                     </div>
@@ -258,8 +387,6 @@
                         <div class="img-box-a">
                             <img src="${cdnUrl}/${productImage.imagePath}" alt="" class="img-a img-fluid w-100">
                         </div>
-                        <div class="card-overlay">
-                        </div>
                     </div>
                     </c:when>
                     </c:choose>
@@ -268,9 +395,6 @@
                 </div>
             </div>
         </div>
-        </div>
-    </section>
-    <!--/ Agent Single End /-->
 
     <!--/ footer Star /-->
     <section class="section-footer">
@@ -435,15 +559,13 @@
 
     <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
     <div id="preloader"></div>
-
+	
     <!-- JavaScript Libraries -->
     <script src="${pageContext.request.contextPath}/assets/lib/jquery/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/lib/jquery/jquery-migrate.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/lib/popper/popper.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/lib/bootstrap/js/bootstrap.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/lib/easing/easing.min.js"></script>
     <script src="${pageContext.request.contextPath}/assets/lib/owlcarousel/owl.carousel.min.js"></script>
-    <script src="${pageContext.request.contextPath}/assets/lib/scrollreveal/scrollreveal.min.js"></script>
     <!-- Template Main Javascript File -->
     <script src="${pageContext.request.contextPath}/assets/js/main.js"></script>
 

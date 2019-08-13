@@ -67,7 +67,7 @@ public class AdminController {
 	public String logout(HttpSession session) {
 		session.removeAttribute("authAdmin");
 		session.invalidate();
-		return "redirect:admin/user/login";
+		return "redirect:/admin/user/login";
 	}
 	
 	@RequestMapping(value= "/join", method=RequestMethod.GET)

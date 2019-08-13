@@ -182,7 +182,7 @@
                                     </div>
                                 </div>
 
-                                <div id="property-carousel" class="owl-carousel owl-theme main-product-image">
+                                <div id="property-carousel" class="owl-carousel owl-theme main-product-image" style="height: 400px;">
 
                                     <c:forEach items="${productList}" var="product">
                                     <a href="${pageContext.request.contextPath}/product/detail?productNo=${product.no}" class="link-a">
@@ -191,8 +191,8 @@
 
                                             <div class="card-box-a card-shadow">
 												
-                                                	<div class="img-box-a">
-                                                        <img src="${cdnUrl}/${product.mainImage}" class="img-a img-fluid">
+                                                	<div class="img-box-a" style="height: 400px;">
+                                                        <img src="${cdnUrl}/${product.mainImage}" height="400px;" class="img-a img-fluid">
                                                 	</div>
 												
                                                 <div class="card-overlay">
@@ -207,23 +207,19 @@
                                                                 <span class="price-a">${product.consumerPrice}원</span>
                                                             </div>
 
-                                                            <span class="ion-ios-arrow-forward product-des-span">${product.description}</span>
+                                                            <span class=" product-des-span">${product.description}</span>
 
                                                         </div>
                                                         <div class="card-footer-a">
                                                             <ul class="card-info d-flex justify-content-around">
                                                                 <li>
-                                                                    <h4 class="card-info-title">Area</h4> <span>340m <sup>2</sup>
-												</span>
+                                                                    <h4 class="card-info-title">분류</h4> <span>${product.completeCategory}</span>
                                                                 </li>
                                                                 <li>
-                                                                    <h4 class="card-info-title">Beds</h4> <span>2</span>
+                                                                    <h4 class="card-info-title">색상</h4> <span></span>
                                                                 </li>
                                                                 <li>
-                                                                    <h4 class="card-info-title">Baths</h4> <span>4</span>
-                                                                </li>
-                                                                <li>
-                                                                    <h4 class="card-info-title">Garages</h4> <span>1</span>
+                                                                    <h4 class="card-info-title">댓글</h4> <span>4</span>
                                                                 </li>
                                                             </ul>
                                                         </div>

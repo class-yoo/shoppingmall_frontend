@@ -34,7 +34,6 @@ public class AdminProductController {
 	}
 	
 	
-	
 	@RequestMapping(value= "/register", method=RequestMethod.GET)
 	public String register(Model model) {
 		return "admin/product/register";

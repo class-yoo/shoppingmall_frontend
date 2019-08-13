@@ -13,7 +13,6 @@ import com.cafe24.shoppingmall.vo.ProductVo;
 @RequestMapping("/product")
 public class ProductController {
 
-	
 	@Autowired
 	private ProductService productService;
 	
@@ -21,17 +20,10 @@ public class ProductController {
 	public String detail(@RequestParam(value="productNo" , defaultValue="0") Long productNo,  Model model) {
 		
 		ProductVo product =  productService.getProductByProductNo(productNo);
-		
-		System.out.println(product);
 		model.addAttribute("product", product);
 		
 		return "product/detail";
 	}
 	
-	
-	@RequestMapping(value= "/register", method=RequestMethod.GET)
-	public String register(Model model) {
-		return "product/register";
-	}
 	
 }
