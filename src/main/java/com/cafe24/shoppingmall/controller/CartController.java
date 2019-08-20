@@ -1,9 +1,7 @@
 package com.cafe24.shoppingmall.controller;
 
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.Cookie;
@@ -14,13 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.cafe24.shoppingmall.dto.CartDTO;
 import com.cafe24.shoppingmall.dto.JSONResult;
 import com.cafe24.shoppingmall.service.CartService;
 import com.cafe24.shoppingmall.vo.CartVo;
@@ -35,7 +33,7 @@ public class CartController {
 	
 	@ResponseBody
 	@RequestMapping(value = "/add", method = RequestMethod.POST)
-	public JSONResult add(@ModelAttribute List<CartVo> cartList, HttpSession session, HttpServletResponse response,
+	public JSONResult add(@RequestBody CartDTO cartDTO, HttpSession session, HttpServletResponse response,
 			@CookieValue(value = "cookieId", defaultValue = "-1") String cookieId) {
 			
 		UserVo userVo = null;
@@ -56,11 +54,10 @@ public class CartController {
 				userId = cookieId;
 			}
 		}
-		Map<String, Object> cartMap = new HashMap<String, Object>();
-		cartMap.put("userId", userId);
-		cartMap.put("cartList", cartList);
 		
-		return cartService.add(cartMap);
+		cartDTO.setUserId(userId);
+		
+		return cartService.add(cartDTO);
 	}
 	
 	@ResponseBody

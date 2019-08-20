@@ -1,12 +1,11 @@
 package com.cafe24.shoppingmall.vo;
 
 public class OrderProductVo {
-
+	
 	private Long orderNo;
 	private Long displayedProductNo;
 	private int amount;
 	private int price;
-	
 	
 	private DisplayedProductVo displayedProductVo;
 	

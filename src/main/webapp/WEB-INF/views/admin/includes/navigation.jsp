@@ -27,7 +27,7 @@
           </li>
           
           <li class="nav-item">
-            <a class="nav-link" href="#">장바구니관리</a>
+            <a class="nav-link" href="${pageContext.request.contextPath}/admin/order/list">주문 관리</a>
           </li>
           
           <li class="nav-item">

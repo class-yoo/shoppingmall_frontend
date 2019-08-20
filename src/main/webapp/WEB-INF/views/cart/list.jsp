@@ -7,12 +7,11 @@
 
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
 
   <meta charset="utf-8">
-  <html lang="en">
   
   <title>SB Admin - Tables</title>
 
@@ -39,10 +38,19 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 
 	<style type="text/css">
+	#modal-background {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,.3);
+    z-index: 1;
+	}
 	
 	.content-wrapper{
 		margin-top: 180px;
 	}
+	
 	th{
 		border-left: 0.8px ridge;
 		border-bottom: solid 0.8px;
@@ -52,58 +60,119 @@
 		border-left: 0.8px ridge;
 		border-bottom: solid 0.8px;
 	}
+	
 	</style>
+	
+	<script type="text/javascript">
+
+	var totalPrice =0;
+	$(function () {
+		
+		$('.order-price').each(function() {
+			totalPrice+=parseInt($(this).text());
+		});
+		
+		$('#total-price').text('TOTAL: '+totalPrice+"원");
+		
+		
+		$('#order-btn').click(function () {
+			/* $('#product-tbody tr').each(function() {
+				if($(this).children('.select-item-cbx').is(":checked")){
+					var orderProduct = new Object();
+					
+					var displayedProductNo = $(this).children('.select-item-cbx').val();
+					var amount = $(this).children('#quantity').val();
+					
+					orderProduct.displayedProductNo = displayedProductNo;
+					orderProduct.amount = amount;
+				}
+				
+			}); */
+			var displayedProductNos = [];
+			$('.select-item-cbx').each(function () {
+				if($(this).is(":checked")){
+					var displayedProductNo = $(this).val();
+					displayedProductNos.push(displayedProductNo);
+				}
+			});
+			console.log(displayedProductNos);
+		});
+		
+	});
+	
+	var upQuantity = function (cartNo) {order-btn
+		
+		var quantity = parseInt($('#quantity'+cartNo).val()) +1 ;
+		if(quantity >20){
+			alert('최대수량은 20개 입니다.');
+			return;
+		}
+		$('#quantity'+cartNo).val(quantity);
+		setTotalPrice(++productCount);
+	};
+	
+	var downQuantity = function (cartNo) {
+		var quantity = parseInt($('#quantity'+cartNo).val())-1 ;
+		if(quantity <1){
+			return;
+		}
+		$('#quantity'+cartNo).val(quantity);
+		setTotalPrice(--productCount);
+		
+		
+		
+		
+	};
+	
+	</script>
 </head>
 
 <body>
 
-	<c:import url="/WEB-INF/views/admin/includes/navigation.jsp" />
+	<c:import url="/WEB-INF/views/includes/navigation.jsp" />
 	
     <div class="content-wrapper">
       <div class="container">
 
         <!-- DataTables Example -->
+        <form action="${pageContext.request.contextPath}/order" method="get">
         <div class="card mb-3">
           <div class="card-header">
             <i class="fas fa-table"></i>
-            	상품목록</div>
+            	장바구니 목록</div>
+            	
           <div class="card-body">
               <table class="table" style="height: 100%; width: 100%; text-align:center;"  cellspacing="0">
                 <thead>
                   <tr>
-                  	<th>
-                  		<div>
-                    		<p>대표이미지</p>
-                    	</div>
-                  	</th>
-                    <th>
+                  	<th width="10%">
                     	<div>
-                    		<p>상품명</p>
+                    		<p>번호</p>
                     	</div>
                     </th>
-                    <th>
+                    <th width="40%">
                     	<div>
+                    		<p>상품명(옵션)</p>
+                    	</div>
+                    </th>
+                    <th width="10%">
+                    	<div >
                     		<p>판매가</p>
                     	</div>
                     </th>
-                    <th width="10%">
+                    <th width="20%">
                     	<div>
-                    		<p>진열상태</p>
+                    		<p>수량</p>
                     	</div>
                     </th>
                     <th width="10%">
                     	<div>
-                    		<p>판매상태</p>
+                    		<p>주문금액</p>
                     	</div>
                     </th>
-                    <th>
+                    <th width="10%">
                     	<div>
-                    		<p>상품분류</p>
-                    	</div>
-                    </th>
-                    <th>
-                    	<div>
-                    		<p>상품등록일</p>
+                    		<p>주문관리</p>
                     	</div>
                     </th>
                     <th></th>
@@ -111,49 +180,54 @@
                 </thead>
                 
                 <tbody id="product-tbody">
-                <c:forEach items="${productList}" var="product">
+                <c:forEach items="${cartList}" var="cart" varStatus="status">
                   <tr>
                   	<td>
-	                  	<a href="#">
-    	              		<img alt="상품이미지" src="${cdnUrl}/${product.mainImage}" style="width: 100px; height: 120px;">
-                  		</a>
-                  	</td>
-                    	<td>
                     	<div class="mt-5" style="padding: 5px;">
-                    		<p>${product.name}</p>
+                    		<p>${status.count}</p>
                     	</div>
-                    	</td>
+                    </td>
+                    <td>
+                    	<div class="row ml-2" style="vertical-align: center;">
+                    	<input class="select-item-cbx form-control mt-5 mr-1" type="checkbox" name="cartNo" value="${cart.no}" style="width: 20px;" height="20px;">
+                    	<a href="${pageContext.request.contextPath}/product/detail?productNo=${cart.displayedProduct.productNo}">
+    	              		<img alt="상품이미지" src="${cdnUrl}/${cart.displayedProduct.mainImagePath}" style="width: 100px; height: 120px;">
+                  		</a>
+                    	<div class="mt-5 ml-4" style="padding: 5px;">
+                    		<p>${cart.displayedProduct.name}(${cart.displayedProduct.option})</p>
+                    	</div>
+                    	</div>
+                    </td>
                     
                     <td>
 	                    <div class="mt-5" style="padding: 5px;">
-	                    		<p>${product.consumerPrice}</p>
+	                    		<p>${cart.displayedProduct.price}원</p>
 	                    </div>
                     </td>
                     <td>
-                    
-	                    <div class="mt-5" style="padding: 5px;">
-	                    	<p>${product.displayCheck}</p>
+	                    <div class="row mt-5" style="padding: 1px;">
+	                    	<div class="product-detail col-4">
+	                    		<input id="quantity${cart.no}" readonly="readonly" class="form-control" id="quantity" value="${cart.amount}" type="text"/>	                    	
+	                    	</div>
+	                    	<div class="product-detail qtt-up-down col-3">
+	                    		<img src="//img.echosting.cafe24.com/design/skin/default/product/btn_count_up.gif" alt="수량증가" onclick="upQuantity(${cart.no},)" class="QuantityUp-up" />
+	                    		<img src="//img.echosting.cafe24.com/design/skin/default/product/btn_count_down.gif" alt="수량감소" onclick="downQuantity(${cart.no})" class="QuantityDown-down mb-4"  />
+	                    	</div>
+	                    	<div class="col-4">
+	        	            		<button class="btn btn-warning" id="modify-btn">수정</button>
+	                    	</div>
+	                    </div>
+                    </td>
+                    <td>
+                    	<div class="row mt-5" style="padding: 5px;">
+	                    	<p class="order-price" id="order-price">${cart.displayedProduct.price*cart.amount}</p>
+	                    	<p>원</p>
 	                    </div>
                     </td>
                     <td>
                     	<div class="mt-5" style="padding: 5px;">
-	                    	<p>${product.saleCheck}</p>
-	                    </div>
-                    </td>
-                    <td>
-                    	<div class="mt-5" style="padding: 5px;">
-	                    	<p> ${product.completeCategory}</p>
-	                    </div>
-                    </td>
-                    <td>
-                    	<div class="mt-5" style="padding: 5px;">
-	                    	<p>${product.regDate}</p>
-	                    </div>
-                    </td>
-                    <td>
-                    	<div class="mt-5" style="padding: 5px;">
-			                <a href="${pageContext.request.contextPath}/admin/product/remove?productNo=${product.no}">
-	        	            	<button class="btn btn-danger form-control">상품삭제</button>
+			                <a href="${pageContext.request.contextPath}/cart/remove?cartNo=${cart.no}">
+	        	            	<button class="btn btn-danger form-control">삭제</button>
 	    	                </a>
     	                </div>
                     </td>
@@ -162,43 +236,13 @@
                 </tbody>
                 
                 <tfoot>
-                 <tr>
-                  	<th>
-                  		<div">
-                    		<p>상품이미지</p>
-                    	</div>
-                  	</th>
-                    <th>
-                    	<div>
-                    		<p>상품명</p>
+                  <tr>
+                  	<th colspan="6">
+                    	<div class="row text-right">
+                    		<div class="col-9"></div>
+                    		<p id="total-price" style="font-size: 20px;"></p>
                     	</div>
                     </th>
-                    <th>
-                    	<div>
-                    		<p>판매가</p>
-                    	</div>
-                    </th>
-                    <th width="10%">
-                    	<div>
-                    		<p>진열상태</p>
-                    	</div>
-                    </th>
-                    <th width="10%">
-                    	<div>
-                    		<p>판매상태</p>
-                    	</div>
-                    </th>
-                    <th>
-                    	<div>
-                    		<p>상품분류</p>
-                    	</div>
-                    </th>
-                    <th>
-                    	<div>
-                    		<p>상품등록일</p>
-                    	</div>
-                    </th>
-                    <th></th>
                   </tr>
                 </tfoot>
               </table>
@@ -207,20 +251,18 @@
           <div class="row">
           	<div class="col-9 mr-3"></div>
           	<div class="col-1 ml-2 mb-3">
-          	<a href="${pageContext.request.contextPath}/admin/product/register">
-          		<button class="btn btn-success btn-lg"><strong>상품 추가하기</strong></button>
-          	</a>
+          		<button class="btn btn-success btn-lg" type="submit" id="order-btn"><strong>주문하기</strong></button>
           	</div>
           	
           </div>
           
-          <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+          <div class="card-footer small text-muted">장바구니 목록</div>
         </div>
-		
+		</form>
         <p class="small text-center text-muted my-5">
           <em>More table examples coming soon...</em>
         </p>
-
+		
       </div>
       <!-- /.container-fluid -->
 
@@ -234,7 +276,11 @@
   <a class="scroll-to-top rounded" href="#page-top">
     <i class="fas fa-angle-up"></i>
   </a>
+	
+<button id="btn-open-dialog">창 열기</button>
 
+<div class="container-fluid" id="modal-background" style="overflow: scroll; margin-top: 110px;">
+	<c:import url="/WEB-INF/views/includes/order-modal.jsp"/>
+</div>
 </body>
 
-</html>
